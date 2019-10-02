@@ -142,3 +142,20 @@ Resources:
         - Key: Region
           Value: !Ref "AWS::Region"
 
+  NetworkStack:
+    Type: "AWS::CloudFormation::Stack"
+    Properties:
+      TemplateURL: !Sub https://s3.amazonaws.com/${DevopsBucket}/cf-modules/network.yml
+      Parameters:
+        ClusterName: !Ref ClusterName
+        InfrastructureName: !Ref InfrastructureName
+        HostedZoneId: !Ref HostedZoneId
+        HostedZoneName: !Ref HostedZoneName
+        PublicSubnets: !Ref PublicSubnets
+        PrivateSubnets: !Ref PrivateSubnets
+        VpcId: !Ref VpcId
+      Tags:
+        - Key: "Env"
+          Value: !Ref Environment
+        - Key: Region
+          Value: !Ref "AWS::Region"
