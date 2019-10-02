@@ -133,12 +133,12 @@ Resources:
     Type: "AWS::CloudFormation::Stack"
     Properties:
       TemplateURL: !Sub https://s3.amazonaws.com/${DevopsBucket}/cf-modules/vpc.yml
-      CidrBlock: !Ref VpcCidr
-      SubnetBits: !Ref SubnetBits
-
-    Tags:
-      - Key: "Env"
-        Value: !Ref Environment
-      - Key: Region
-        Value: !Ref "AWS::Region"
+      Parameters:
+        CidrBlock: !Ref VpcCidr
+        SubnetBits: !Ref SubnetBits
+      Tags:
+        - Key: "Env"
+          Value: !Ref Environment
+        - Key: Region
+          Value: !Ref "AWS::Region"
 
