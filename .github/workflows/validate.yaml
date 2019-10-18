@@ -15,9 +15,10 @@ jobs:
       - name: Download openshift-installer
         run: wget https://mirror.openshift.com/pub/openshift-v4/clients/ocp/latest/openshift-install-linux-4.2.0.tar.gz; tar -xvf $GITHUB_WORKSPACE/openshift-install-linux*
       - name: Customize install-config.yml 
-        run: sed -i 's/RH_OCP_PULL_SECRET/${{ secrets.RH_OCP_PULL_SECRET }}/g' install-config.yml; cat $GITHUB_WORKSPACE/id_rsa.pub >> install-config.yml; cat install-config.yml
-      - name: Create manifest
-        run: $GITHUB_WORKSPACE/openshift-install create manifests --dir=. --log-level=debug
+        run: |
+        sed -i 's/RH_OCP_PULL_SECRET/${{ secrets.RH_OCP_PULL_SECRET }}/g' install-config.yml; cat $GITHUB_WORKSPACE/id_rsa.pub >> install-config.yml; cat install-config.yml
+        $GITHUB_WORKSPACE/openshift-install create manifests --dir=. --log-level=debug; ls -ltr
+
       - name: List manifest
         run: ls -ltr .
       - name: Remove
