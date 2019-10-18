@@ -17,7 +17,7 @@ jobs:
       - name: Customize install-config.yml 
         run: sed -i 's/RH_OCP_PULL_SECRET/${{ secrets.RH_OCP_PULL_SECRET }}/g' install-config.yml;cat $GITHUB_WORKSPACE/id_rsa.pub >> install-config.yml; cat install-config.yml
       - name: Create manifest
-        run: $GITHUB_WORKSPACE/openshift-install create manifest --dir=.
+        run: $GITHUB_WORKSPACE/openshift-install create manifests --dir=.
       - name: List manifest
         run: ls -ltr .
       - name: Remove
