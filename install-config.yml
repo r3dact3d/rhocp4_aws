@@ -24,5 +24,5 @@ networking:
 platform:
   aws:
     region: us-east-1
-pullSecret: $RH_OCP_PULL_SECRET
+pullSecret: RH_OCP_PULL_SECRET
 sshKey: |
