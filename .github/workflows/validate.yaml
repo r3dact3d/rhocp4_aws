@@ -3,8 +3,8 @@ on:
   push:
     branches:
       - 'master'
-    paths:
-      - 'params.json'
+#    paths:
+#      - 'params.json'
 jobs:
   setup:
     runs-on: ubuntu-latest
@@ -15,9 +15,6 @@ jobs:
         run: eval "$(ssh-agent -s)"
       - name: Add SSH Key to Agent 
         run: ssh-add $GITHUB_WORKSPACE/id_rsa
-
-
-
 
 
   validate-template:
