@@ -3,6 +3,10 @@
 * Public Hosted Zone is created
 * Downloaded PullSecret from https://cloud.redhat.com/openshift/install for customer
 
+### GitHub Secrets
+ **RH_OCP_PULL_SECRET**
+ **AWS_ACCESS_KEY_ID**
+ **AWS_SECRET_ACCESS_KEY**
 
 **params.json**
 This is the parameters file that passes customizable params to the parent stack infra.yml
@@ -17,3 +21,4 @@ This directory holds the Cloudformation templates that create the different nest
 ### GitHub Actions
 **validate.aml**
 Takes each module and validates
+
