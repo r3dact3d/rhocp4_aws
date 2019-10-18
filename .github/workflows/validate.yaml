@@ -10,10 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Configure SSH Key 
-        run: ssh-keygen -t rsa -b 4096 -N '' -f id_rsa; eval "$(ssh-agent -s)"
-      - name: Add SSH Key to Agent 
-        run: ssh-agent $GITHUB_WORKSPACE/id_rsa
-
+        run: ssh-keygen -t rsa -b 4096 -N '' -f id_rsa; eval "$(ssh-agent -s)"; ssh-add $GITHUB_WORKSPACE/id_rsa
 
 
   validate-template:
