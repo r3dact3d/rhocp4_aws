@@ -3,7 +3,7 @@ on:
   pull_request:
     paths:
       - 'cf-modules/*'
-      - 'cf-templates/*'
+      - 'infra.yml'
 jobs:
   deploy:
     name: Validate Cloudformation Templates
@@ -17,4 +17,4 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_DEFAULT_REGION: us-west-1
         with:
-          args: cloudformation validate-template --template-body file://cf-templates/infra.yaml
+          args: cloudformation validate-template --template-body file://infra.yml
