@@ -1,9 +1,10 @@
 name: Continuous Validation of AWS Cloudformation Templates 
 on:
-  pull_request:
+  push:
+    branches:
+      - 'master'
     paths:
-      - 'cf-modules/*'
-      - 'infra.yml'
+      - 'params.json'
 jobs:
   deploy:
     name: Validate Cloudformation Templates
@@ -15,6 +16,6 @@ jobs:
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_DEFAULT_REGION: us-west-1
+          AWS_DEFAULT_REGION: us-east-1
         with:
           args: cloudformation validate-template --template-body file://infra.yml
