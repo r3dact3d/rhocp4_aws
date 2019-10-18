@@ -230,12 +230,10 @@ Resources:
       TemplateURL: !Sub https://s3.amazonaws.com/${DevopsBucket}/cf-modules/clusterControlPlane.yml
       Parameters:
         InfrastructureName: !Ref InfrastructureName
-        BootstrapIgnitionLocation: !Sub s3://${DevopsBucket}/bootstrap.ign
         RhcosAmi: !Ref RhcosAmi
         AutoRegisterDNS: "yes"
         AutoRegisterELB: "yes"
         MasterInstanceType: m4.xlarge
-        VpcId: !GetAtt VpcStack.Outputs.VpcId
         PrivateHostedZoneId: !GetAtt NetworkStack.Outputs.PrivateHostedZoneId
         PrivateHostedZoneName: !Join [".", [!Ref ClusterName, !Ref HostedZoneName]]
         Master0Subnet: !Select [0, !Split [",", !GetAtt VpcStack.Outputs.PrivateSubnetIds]]
@@ -266,10 +264,9 @@ Resources:
       TemplateURL: !Sub https://s3.amazonaws.com/${DevopsBucket}/cf-modules/clusterWorker.yml
       Parameters:
         InfrastructureName: !Ref InfrastructureName
-        BootstrapIgnitionLocation: !Sub s3://${DevopsBucket}/bootstrap.ign
         RhcosAmi: !Ref RhcosAmi
         WorkerInstanceType: m4.xlarge
-        Master0Subnet: !Select [0, !Split [",", !GetAtt VpcStack.Outputs.PrivateSubnetIds]]
+        Subnet: !Select [0, !Split [",", !GetAtt VpcStack.Outputs.PrivateSubnetIds]]
         WorkerSecurityGroupId: !GetAtt SecurityStack.Outputs.WorkerSecurityGroupId
         IgnitionLocation: !Sub https://api-int.${ClusterName}.${HostedZoneName}:22623/config/
         CertificateAuthorities: !Ref CertificateAuthorities
@@ -284,17 +281,16 @@ Resources:
         - Key: Region
           Value: !Ref "AWS::Region"
 
-  Worker0Stack:
+  Worker1Stack:
     DependsOn: [SecurityStack, NetworkStack]
     Type: AWS::CloudFormation::Stack
     Properties:
       TemplateURL: !Sub https://s3.amazonaws.com/${DevopsBucket}/cf-modules/clusterWorker.yml
       Parameters:
         InfrastructureName: !Ref InfrastructureName
-        BootstrapIgnitionLocation: !Sub s3://${DevopsBucket}/bootstrap.ign
         RhcosAmi: !Ref RhcosAmi
         WorkerInstanceType: m4.xlarge
-        Master0Subnet: !Select [1, !Split [",", !GetAtt VpcStack.Outputs.PrivateSubnetIds]]
+        Subnet: !Select [1, !Split [",", !GetAtt VpcStack.Outputs.PrivateSubnetIds]]
         WorkerSecurityGroupId: !GetAtt SecurityStack.Outputs.WorkerSecurityGroupId
         IgnitionLocation: !Sub https://api-int.${ClusterName}.${HostedZoneName}:22623/config/
         CertificateAuthorities: !Ref CertificateAuthorities

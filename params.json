@@ -1,11 +1,11 @@
 [
   {
     "ParameterKey": "VpcCidr", 
-    "ParameterValue": "10.20.0.0/16" 
+    "ParameterValue": "10.0.0.0/16" 
   },
   {
-    "ParameterKey": "AvailabilityZoneCount", 
-    "ParameterValue": "2" 
+    "ParameterKey": "AllowedBootstrapSshCidr", 
+    "ParameterValue": "47.187.130.94/32" 
   },
   {
     "ParameterKey": "SubnetBits", 
@@ -13,11 +13,11 @@
   },
   {
     "ParameterKey": "ClusterName", 
-    "ParameterValue": "ocp4-upi-brady-cluster" 
+    "ParameterValue": "sandbox" 
   },
   {
     "ParameterKey": "InfrastructureName", 
-    "ParameterValue": "ocp4-upi-brady-cluste-c6lz6" 
+    "ParameterValue": "sandbox-krmkd" 
   },
   {
     "ParameterKey": "HostedZoneId", 
@@ -25,18 +25,34 @@
   },
   {
     "ParameterKey": "HostedZoneName", 
-    "ParameterValue": "deleteme.crossvale-ocp.com" 
+    "ParameterValue": "bradythompson.info" 
   },
   {
-    "ParameterKey": "PublicSubnets", 
-    "ParameterValue": "subnet-08789067c2905fad7,subnet-0e8b433ec301865b6" 
+    "ParameterKey": "HostedZoneId", 
+    "ParameterValue": "ZL7M8D8VFD028" 
   },
   {
-    "ParameterKey": "PrivateSubnets", 
-    "ParameterValue": "subnet-09764a1aeea95d6b5,subnet-011c9f097fe02d5c5" 
+    "ParameterKey": "CertificateAuthorities", 
+    "ParameterValue": "${{ secrets.CertificateAuthorities }}"
   },
   {
-    "ParameterKey": "VpcId", 
-    "ParameterValue": "vpc-0dcd10a1bc57d0c83" 
+    "ParameterKey": "Environment",
+    "ParameterValue": "sandbox"
+  },
+  {
+    "ParameterKey": "DevopsBucket",
+    "ParameterValue": "xv-ocp4-sandbox"
+  },
+    {
+    "ParameterKey": "Owner", 
+    "ParameterValue": "Brady"
+  },
+  {
+    "ParameterKey": "Organization",
+    "ParameterValue": "XV"
+  },
+  {
+    "ParameterKey": "RhcosAmi",
+    "ParameterValue": "ami-05263584402676c48"
   }
 ]

@@ -105,7 +105,6 @@ Metadata:
     - Label:
         default: "Network Configuration"
       Parameters:
-      - VpcId
       - AllowedBootstrapSshCidr
       - Master0Subnet
       - Master1Subnet
@@ -127,8 +126,6 @@ Metadata:
     ParameterLabels:
       InfrastructureName:
         default: "Infrastructure Name"
-      VpcId:
-        default: "VPC ID"
       Master0Subnet:
         default: "Master-0 Subnet"
       Master1Subnet:
@@ -141,8 +138,6 @@ Metadata:
         default: "Master Instance Profile Name"
       RhcosAmi:
         default: "Red Hat Enterprise Linux CoreOS AMI ID"
-      BootstrapIgnitionLocation:
-        default: "Master Ignition Source"
       CertificateAuthorities:
         default: "Ignition CA String"
       MasterSecurityGroupId:
