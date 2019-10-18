@@ -11,6 +11,10 @@ jobs:
     steps:
       - name: Configure SSH Key 
         run: ssh-keygen -t rsa -b 4096 -N '' -f id_rsa; eval "$(ssh-agent -s)"; ssh-add $GITHUB_WORKSPACE/id_rsa
+      - name: Download openshift-installer
+        run: wget https://mirror.openshift.com/pub/openshift-v4/clients/ocp/latest/openshift-install-linux-4.2.0.tar.gz; tar -xvf $GITHUB_WORKSPACE/openshift-install-linux*
+      - name: Print openshift-installer version
+        run: $GITHUB_WORKSPACE/openshift-install --version
 
 
   validate-template:
