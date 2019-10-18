@@ -1,13 +1,14 @@
 # rhocp4_aws
 
-### cf-templates
-This directory holds the parent stack infa.yaml
+### params.json
+This is the parameters file that passes customizable params to the parent stack infra.yml
+
+### infra.yml
+This is in root directory and is the parent stack, it holds some parameters that can be modified that aren't in the parameters file.
 
 ### cf-modules
-This directory holds the Cloudformation modules that are called by infra.yaml
+This directory holds the Cloudformation templates that create the different nested stacks that are called by infra.yml
 
-### vpc.yaml
-This template will deploy the networking resources that define the VPC 
 
 ## GitHub Actions
 ### validate.aml
