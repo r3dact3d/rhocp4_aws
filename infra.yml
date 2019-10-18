@@ -1,0 +1,310 @@
+---
+AWSTemplateFormatVersion: 2010-09-09
+Description: Landing-Zone Stack which hosts Resources shared across different Environments            
+
+Parameters:
+  ### Environment Details
+  Environment:
+    Type: String
+    Description: "Prod/Stage/Dev"
+  DevopsBucket:
+    Description: Devops Bucket name where bootstrap.ign and CF templates are located
+    Type: String
+  Owner:
+    Type: String
+  Organization:
+    Type: String
+  VpcCidr:
+    AllowedPattern: ^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\/(1[6-9]|2[0-4]))$
+    ConstraintDescription: CIDR block parameter must be in the form x.x.x.x/16-24.
+    Default: 10.0.0.0/16
+    Description: CIDR block for VPC.
+    Type: String
+  SubnetBits:
+    ConstraintDescription: CIDR block parameter must be in the form x.x.x.x/19-27.
+    MinValue: 5
+    MaxValue: 13
+    Default: 12
+    Description: "Size of each subnet to create within the availability zones. (Min: 5 = /27, Max: 13 = /19)"
+    Type: Number
+  ClusterName:
+    AllowedPattern: ^([a-zA-Z][a-zA-Z0-9\-]{0,26})$
+    MaxLength: 27
+    MinLength: 1
+    ConstraintDescription: Cluster name must be alphanumeric, start with a letter, and have a maximum of 27 characters.
+    Description: Specify the cluster name that you used when you generated the install-config.yaml file for the cluster.
+    Type: String
+  InfrastructureName:
+    AllowedPattern: ^([a-zA-Z][a-zA-Z0-9\-]{0,26})$
+    MaxLength: 27
+    MinLength: 1
+    ConstraintDescription: Infrastructure name must be alphanumeric, start with a letter, and have a maximum of 27 characters.
+    Description: Specify the infrastructure name that you extracted from the Ignition config file metadata. 
+    Type: String
+  HostedZoneId:
+    Description: The Route53 public zone ID to register the targets with, such as Z21IXYZABCZ2A4.
+    Type: String
+  HostedZoneName:
+    Description: The Route53 zone to register the targets with, such as example.com. Omit the trailing period.
+    Type: String
+    Default: "example.com"
+  RhcosAmi:
+    Description: Current Red Hat Enterprise Linux CoreOS AMI to use for bootstrap.
+    Type: AWS::EC2::Image::Id
+  AllowedBootstrapSshCidr:
+    AllowedPattern: ^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\/([0-9]|1[0-9]|2[0-9]|3[0-2]))$
+    ConstraintDescription: CIDR block parameter must be in the form x.x.x.x/0-32.
+    Default: 0.0.0.0/0
+    Description: CIDR block to allow SSH access to the bootstrap node.
+    Type: String
+  CertificateAuthorities:
+    Default: data:text/plain;charset=utf-8;base64,ABC...xYz==
+    Description: Specify the value from the worker.ign file that is in the installation directory.
+    Type: String
+
+Metadata:
+  AWS::CloudFormation::Interface:
+    ParameterGroups:
+    - Label: 
+        default: "Environment Details"
+      Parameters:
+      - Environment
+      - DevopsBucket
+      - Owner
+      - Organization
+    - Label:
+        default: "Network Configuration"
+      Parameters:
+      - VpcCidr
+      - SubnetBits
+    - Label:
+        default: "DNS"
+      Parameters:
+      - HostedZoneName
+      - HostedZoneId
+    - Label:
+        default: "Cluster Information"
+      Parameters:
+      - ClusterName
+      - InfrastructureName
+    - Label:
+        default: "Host Information"
+      Parameters:
+      - RhcosAmi
+      - AllowedBootstrapSshCidr
+      - CertificateAuthorities
+
+    ParameterLabels:
+      Environment:
+        default: "Dev/Stg/Prod"
+      DevOpsBucket:
+        default: "xv-ocp4-sandbox"
+      Owner:
+        default: "Not_Brady"
+      Organization:
+        default: "XV"
+      VpcCidr:
+        default: "VPC CIDR"
+      SubnetBits:
+        default: "Bits Per Subnet"
+      ClusterName:
+        default: "Cluster Name"
+      InfrastructureName:
+        default: "Infrastructure Name"
+      HostedZoneName:
+        default: "Public Hosted Zone Name"
+      HostedZoneId:
+        default: "Public Hosted Zone ID"
+      AllowedBootstrapSshCidr:
+        default: "Allowed SSH Source"
+      RhcosAmi:
+        default: "Red Hat Enterprise Linux CoreOS AMI ID"
+      CertificateAuthorities:
+        default: "Ignition CA String"
+
+Conditions:
+  Sandbox: !Equals [Sandbox, !Ref Environment]
+  SandboxDev: !Or [!Equals [Sandbox, !Ref Environment], !Equals [Dev, !Ref Environment]]
+  NotSandbox: !Not [!Equals [Sandbox, !Ref Environment]]
+  NotDev: !Not [!Equals [Dev, !Ref Environment]]
+  Prod: !Equals [Prod, !Ref Environment]
+  Pci-Prod: !Equals [Pci-Prod, !Ref Environment]
+  NotPci-Prod: !Not [!Equals [Pci-Prod, !Ref Environment]]
+
+Resources:
+  VpcStack:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Sub https://s3.amazonaws.com/${DevopsBucket}/cf-modules/clusterVpc.yml
+      Parameters:
+        VpcCidr: !Ref VpcCidr
+        # If you change the AZ Count, there are additional changes needed for
+        # Fn:Select statements under ControlPlaneStack
+        AvailabilityZoneCount: "3"
+        SubnetBits: !Ref SubnetBits
+      Tags:
+        - Key: "Env"
+          Value: !Ref Environment
+        - Key: "Owner"
+          Value: "network team"
+        - Key: "Organization"
+          Value: "xv"
+        - Key: Region
+          Value: !Ref "AWS::Region"
+
+  NetworkStack:
+    DependsOn: VpcStack
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Sub https://s3.amazonaws.com/${DevopsBucket}/cf-modules/clusterNetwork.yml
+      Parameters:
+        ClusterName: !Ref ClusterName
+        InfrastructureName: !Ref InfrastructureName
+        HostedZoneId: !Ref HostedZoneId
+        HostedZoneName: !Ref HostedZoneName
+        PublicSubnets: !GetAtt VpcStack.Outputs.PublicSubnetIds
+        PrivateSubnets: !GetAtt VpcStack.Outputs.PrivateSubnetIds
+        VpcId: !GetAtt VpcStack.Outputs.VpcId
+      Tags:
+        - Key: "Env"
+          Value: !Ref Environment
+        - Key: "Owner"
+          Value: "network team"
+        - Key: "Organization"
+          Value: "xv"
+        - Key: Region
+          Value: !Ref "AWS::Region"
+
+  SecurityStack:
+    DependsOn: VpcStack
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Sub https://s3.amazonaws.com/${DevopsBucket}/cf-modules/clusterSecurity.yml
+      Parameters:
+        InfrastructureName: !Ref InfrastructureName
+        VpcCidr: !Ref VpcCidr
+        PrivateSubnets: !GetAtt VpcStack.Outputs.PrivateSubnetIds
+        VpcId: !GetAtt VpcStack.Outputs.VpcId
+      Tags:
+        - Key: "Env"
+          Value: !Ref Environment
+        - Key: "Owner"
+          Value: "network team"
+        - Key: "Organization"
+          Value: "xv"
+        - Key: Region
+          Value: !Ref "AWS::Region"
+
+  BootstrapStack:
+    DependsOn: [SecurityStack, NetworkStack]
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Sub https://s3.amazonaws.com/${DevopsBucket}/cf-modules/clusterBootstrap.yml
+      Parameters:
+        InfrastructureName: !Ref InfrastructureName
+        AllowedBootstrapSshCidr: !Ref AllowedBootstrapSshCidr
+        BootstrapIgnitionLocation: !Sub s3://${DevopsBucket}/bootstrap.ign
+        RhcosAmi: !Ref RhcosAmi
+        VpcId: !GetAtt VpcStack.Outputs.VpcId
+        PublicSubnet: !Select [0, !Split [",", !GetAtt VpcStack.Outputs.PublicSubnetIds]]
+        MasterSecurityGroupId: !GetAtt SecurityStack.Outputs.MasterSecurityGroupId
+        AutoRegisterELB: "yes"
+        RegisterNlbIpTargetsLambdaArn: !GetAtt NetworkStack.Outputs.RegisterNlbIpTargetsLambda
+        ExternalApiTargetGroupArn: !GetAtt NetworkStack.Outputs.ExternalApiTargetGroupArn
+        InternalApiTargetGroupArn: !GetAtt NetworkStack.Outputs.InternalApiTargetGroupArn
+        InternalServiceTargetGroupArn: !GetAtt NetworkStack.Outputs.InternalServiceTargetGroupArn
+      Tags:
+        - Key: "Env"
+          Value: !Ref Environment
+        - Key: "Owner"
+          Value: "network team"
+        - Key: "Organization"
+          Value: "xv"
+        - Key: Region
+          Value: !Ref "AWS::Region"
+
+  ControlPlaneStack:
+    DependsOn: [SecurityStack, NetworkStack]
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Sub https://s3.amazonaws.com/${DevopsBucket}/cf-modules/clusterControlPlane.yml
+      Parameters:
+        InfrastructureName: !Ref InfrastructureName
+        BootstrapIgnitionLocation: !Sub s3://${DevopsBucket}/bootstrap.ign
+        RhcosAmi: !Ref RhcosAmi
+        AutoRegisterDNS: "yes"
+        AutoRegisterELB: "yes"
+        MasterInstanceType: m4.xlarge
+        VpcId: !GetAtt VpcStack.Outputs.VpcId
+        PrivateHostedZoneId: !GetAtt NetworkStack.Outputs.PrivateHostedZoneId
+        PrivateHostedZoneName: !Join [".", [!Ref ClusterName, !Ref HostedZoneName]]
+        Master0Subnet: !Select [0, !Split [",", !GetAtt VpcStack.Outputs.PrivateSubnetIds]]
+        Master1Subnet: !Select [1, !Split [",", !GetAtt VpcStack.Outputs.PrivateSubnetIds]]
+        Master2Subnet: !Select [2, !Split [",", !GetAtt VpcStack.Outputs.PrivateSubnetIds]]
+        MasterSecurityGroupId: !GetAtt SecurityStack.Outputs.MasterSecurityGroupId
+        IgnitionLocation: !Sub https://api-int.${ClusterName}.${HostedZoneName}:22623/config/
+        CertificateAuthorities: !Ref CertificateAuthorities
+        MasterInstanceProfileName: !GetAtt SecurityStack.Outputs.MasterInstanceProfile
+        RegisterNlbIpTargetsLambdaArn: !GetAtt NetworkStack.Outputs.RegisterNlbIpTargetsLambda
+        ExternalApiTargetGroupArn: !GetAtt NetworkStack.Outputs.ExternalApiTargetGroupArn
+        InternalApiTargetGroupArn: !GetAtt NetworkStack.Outputs.InternalApiTargetGroupArn
+        InternalServiceTargetGroupArn: !GetAtt NetworkStack.Outputs.InternalServiceTargetGroupArn
+      Tags:
+        - Key: "Env"
+          Value: !Ref Environment
+        - Key: "Owner"
+          Value: "network team"
+        - Key: "Organization"
+          Value: "xv"
+        - Key: Region
+          Value: !Ref "AWS::Region"
+
+  Worker0Stack:
+    DependsOn: [SecurityStack, NetworkStack]
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Sub https://s3.amazonaws.com/${DevopsBucket}/cf-modules/clusterWorker.yml
+      Parameters:
+        InfrastructureName: !Ref InfrastructureName
+        BootstrapIgnitionLocation: !Sub s3://${DevopsBucket}/bootstrap.ign
+        RhcosAmi: !Ref RhcosAmi
+        WorkerInstanceType: m4.xlarge
+        Master0Subnet: !Select [0, !Split [",", !GetAtt VpcStack.Outputs.PrivateSubnetIds]]
+        WorkerSecurityGroupId: !GetAtt SecurityStack.Outputs.WorkerSecurityGroupId
+        IgnitionLocation: !Sub https://api-int.${ClusterName}.${HostedZoneName}:22623/config/
+        CertificateAuthorities: !Ref CertificateAuthorities
+        WorkerInstanceProfileName: !GetAtt SecurityStack.Outputs.WorkerInstanceProfile
+      Tags:
+        - Key: "Env"
+          Value: !Ref Environment
+        - Key: "Owner"
+          Value: "network team"
+        - Key: "Organization"
+          Value: "xv"
+        - Key: Region
+          Value: !Ref "AWS::Region"
+
+  Worker0Stack:
+    DependsOn: [SecurityStack, NetworkStack]
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Sub https://s3.amazonaws.com/${DevopsBucket}/cf-modules/clusterWorker.yml
+      Parameters:
+        InfrastructureName: !Ref InfrastructureName
+        BootstrapIgnitionLocation: !Sub s3://${DevopsBucket}/bootstrap.ign
+        RhcosAmi: !Ref RhcosAmi
+        WorkerInstanceType: m4.xlarge
+        Master0Subnet: !Select [1, !Split [",", !GetAtt VpcStack.Outputs.PrivateSubnetIds]]
+        WorkerSecurityGroupId: !GetAtt SecurityStack.Outputs.WorkerSecurityGroupId
+        IgnitionLocation: !Sub https://api-int.${ClusterName}.${HostedZoneName}:22623/config/
+        CertificateAuthorities: !Ref CertificateAuthorities
+        WorkerInstanceProfileName: !GetAtt SecurityStack.Outputs.WorkerInstanceProfile
+      Tags:
+        - Key: "Env"
+          Value: !Ref Environment
+        - Key: "Owner"
+          Value: "network team"
+        - Key: "Organization"
+          Value: "xv"
+        - Key: Region
+          Value: !Ref "AWS::Region"

@@ -1,5 +1,5 @@
 AWSTemplateFormatVersion: 2010-09-09
-Description: Template to deploy VPC with 1-3 AZs
+Description: Template for Best Practice VPC with 1-3 AZs
 
 Parameters:
   VpcCidr:
