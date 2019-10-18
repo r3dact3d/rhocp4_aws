@@ -16,7 +16,14 @@ jobs:
         run: wget https://mirror.openshift.com/pub/openshift-v4/clients/ocp/latest/openshift-install-linux-4.2.0.tar.gz; tar -xvf $GITHUB_WORKSPACE/openshift-install-linux*
       - name: Customize install-config.yml 
         run: sed -i 's/RH_OCP_PULL_SECRET/${{ secrets.RH_OCP_PULL_SECRET }}/g' install-config.yml;cat $GITHUB_WORKSPACE/id_rsa.pub >> install-config.yml; cat install-config.yml
-
+      - name: Create manifest
+        run: $GITHUB_WORKSPACE/openshift-install create manifest --dir=.
+      - name: List manifest
+        run: ls -ltr .
+      - name: Remove
+        run: rm -rf openshift/99_openshift-cluster-api_{master,worker}-machines*.yaml
+      - name: List manifest after prune
+        run: ls -ltr .
 
   validate-template:
     name: Validate Cloudformation Templates
