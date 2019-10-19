@@ -33,7 +33,7 @@
   },
   {
     "ParameterKey": "CertificateAuthorities", 
-    "ParameterValue": "${{ secrets.CertificateAuthorities }}"
+    "ParameterValue": "CERTIFICATE_AUTHORITIES"
   },
   {
     "ParameterKey": "Environment",

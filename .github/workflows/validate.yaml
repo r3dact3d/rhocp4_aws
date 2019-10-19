@@ -6,28 +6,13 @@ on:
 #    paths:
 #      - 'params.json'
 jobs:
-  setup:
+  Deploy:
+    name: Deploy OCP_4.2 Cloudformation Nested Stack
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@master
-      - name: Configure SSH Key 
-        run: ssh-keygen -t rsa -b 4096 -N '' -f id_rsa; eval "$(ssh-agent -s)"; ssh-add $GITHUB_WORKSPACE/id_rsa
-      - name: Download openshift-installer
-        run: wget https://mirror.openshift.com/pub/openshift-v4/clients/ocp/latest/openshift-install-linux-4.2.0.tar.gz; tar -xvf $GITHUB_WORKSPACE/openshift-install-linux*
-      - name: Customize install-config.yml 
-        run: sed -i 's/RH_OCP_PULL_SECRET/${{ secrets.RH_OCP_PULL_SECRET }}/g' install-config.yml; cat $GITHUB_WORKSPACE/id_rsa.pub >> install-config.yml; cat install-config.yml; $GITHUB_WORKSPACE/openshift-install create manifests --dir=. --log-level=debug; ls -ltr
-      - name: List manifest
-        run: ls -ltr .
-      - name: Remove
-        run: rm -rf openshift/99_openshift-cluster-api_{master,worker}-machines*.yaml
-      - name: List manifest after prune
-        run: ls -ltr .
-
-  validate-template:
-    name: Validate Cloudformation Templates
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@master
+      - name: Update params with CertificateAuthorities secret
+        run: sed -i 's/CERTIFICATE_AUTHORITIES/${{ secrets.CertificateAuthorities }}/g' params.json
       - name: Validate Infra Template
         uses: actions/aws/cli@master
         env:
@@ -36,4 +21,13 @@ jobs:
           AWS_DEFAULT_REGION: us-east-1
         with:
           args: cloudformation validate-template --template-body file://infra.yml
+      - name: Create Netsted Stack
+        uses: actions/aws/cli@master
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: us-east-1
+        with:
+          args: cloudformation create-stack --stack-name sandboxStack --template-body file://infra.yml --parameters file://params.json --capabilities CAPABILITY_NAMED_IAM CAPABILITY_AUTO_EXPAND
+
 
