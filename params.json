@@ -21,15 +21,11 @@
   },
   {
     "ParameterKey": "HostedZoneId", 
-    "ParameterValue": "Z3RX7COW4CJERW" 
+    "ParameterValue": "Z1QW2RQYHKJ0D7" 
   },
   {
     "ParameterKey": "HostedZoneName", 
     "ParameterValue": "bradythompson.info" 
-  },
-  {
-    "ParameterKey": "HostedZoneId", 
-    "ParameterValue": "ZL7M8D8VFD028" 
   },
   {
     "ParameterKey": "CertificateAuthorities", 

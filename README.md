@@ -2,9 +2,11 @@
 ## Assumptions
 * Public Hosted Zone is created
 * Downloaded PullSecret from https://cloud.redhat.com/openshift/install for customer
+* Have SSH Key and Agent running
+* Have your own install-config, manifests, and ignition files
 
 ### GitHub Secrets
- **RH_OCP_PULL_SECRET**
+ **CONTAINER_AUTHORITIES** - This is found in __worker.ign__
  **AWS_ACCESS_KEY_ID**
  **AWS_SECRET_ACCESS_KEY**
 
@@ -20,5 +22,7 @@ This directory holds the Cloudformation templates that create the different nest
 
 ### GitHub Actions
 **validate.aml**
-Takes each module and validates
 
+
+#### TODO
+* Add step in pipeline to put cf-modules in s3 bucket - needs to read DevopsBucket from params

@@ -12,7 +12,7 @@ jobs:
     steps:
       - uses: actions/checkout@master
       - name: Update params with CertificateAuthorities secret
-        run: sed -i 's@CERTIFICATE_AUTHORITIES@${{ secrets.CERTIFICATE_AUTHORITIES1 }}@g' params.json
+        run: sed -i 's@CERTIFICATE_AUTHORITIES@${{ secrets.CERTIFICATE_AUTHORITIES }}@g' params.json
       - name: Print params
         run: cat params.json
       - name: Validate Infra Template
@@ -30,6 +30,6 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_DEFAULT_REGION: us-east-1
         with:
-          args: cloudformation create-stack --stack-name sandboxStack --template-body file://infra.yml --parameters file://params.json --capabilities CAPABILITY_NAMED_IAM CAPABILITY_AUTO_EXPAND
+          args: cloudformation update-stack --stack-name sandboxStack --template-body file://infra.yml --parameters file://params.json --capabilities CAPABILITY_NAMED_IAM CAPABILITY_AUTO_EXPAND
 
 
