@@ -12,7 +12,7 @@ jobs:
     steps:
       - uses: actions/checkout@master
       - name: Update params with CertificateAuthorities secret
-        run: sed -i 's/CERTIFICATE_AUTHORITIES/'${{ secrets.CertificateAuthorities }}'/g' params.json
+        run: sed -i 's/CERTIFICATE_AUTHORITIES/'${{ secrets.CERTIFICATE_AUTHORITIES }}'/g' params.json
       - name: Validate Infra Template
         uses: actions/aws/cli@master
         env:
