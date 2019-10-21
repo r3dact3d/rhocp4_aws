@@ -6,9 +6,9 @@
 * Have your own install-config, manifests, and ignition files
 
 ### GitHub Secrets
- **CONTAINER_AUTHORITIES** - This is found in __worker.ign__
- **AWS_ACCESS_KEY_ID**
- **AWS_SECRET_ACCESS_KEY**
+* **CONTAINER_AUTHORITIES** - This is found in __worker.ign__
+* **AWS_ACCESS_KEY_ID**
+* **AWS_SECRET_ACCESS_KEY**
 
 **params.json**
 This is the parameters file that passes customizable params to the parent stack infra.yml
