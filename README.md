@@ -4,20 +4,17 @@
 * Downloaded PullSecret from https://cloud.redhat.com/openshift/install for customer
 * Have SSH Key and Agent running
 * Have your own install-config, manifests, and ignition files
+* S3 bucket __DevopsBucket__ with directory named cf-modules that include all CF templates and the bootstrap.ign file in root
 
 ### GitHub Secrets
-* **CONTAINER_AUTHORITIES** - This is found in __worker.ign__
-* **AWS_ACCESS_KEY_ID**
-* **AWS_SECRET_ACCESS_KEY**
+* CERTIFICATE_AUTHORITIES - This is found in __worker.ign__
+* AWS_ACCESS_KEY_ID
+* AWS_SECRET_ACCESS_KEY
 
-**params.json**
-This is the parameters file that passes customizable params to the parent stack infra.yml
-
-**infra.yml**
-This is in root directory and is the parent stack, it holds some parameters that can be modified that aren't in the parameters file.
-
-**cf-modules**
-This directory holds the Cloudformation templates that create the different nested stacks that are called by infra.yml
+### Cloudformation Files
+* params.json - This is the parameters file that passes customizable params to the parent stack infra.yml
+* infra.yml - This is in root directory and is the parent stack, it holds some parameters that can be modified that aren't in the parameters file.
+* cf-modules - This directory holds the Cloudformation templates that create the different nested stacks that are called by infra.yml
 
 
 ### GitHub Actions

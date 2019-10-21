@@ -13,19 +13,19 @@
   },
   {
     "ParameterKey": "ClusterName", 
-    "ParameterValue": "sandbox" 
+    "ParameterValue": "brady" 
   },
   {
     "ParameterKey": "InfrastructureName", 
-    "ParameterValue": "sandbox-krmkd" 
+    "ParameterValue": "brady-l2fm7" 
   },
   {
     "ParameterKey": "HostedZoneId", 
-    "ParameterValue": "Z1QW2RQYHKJ0D7" 
+    "ParameterValue": "Z175JZFFVG0VJJ" 
   },
   {
     "ParameterKey": "HostedZoneName", 
-    "ParameterValue": "bradythompson.info" 
+    "ParameterValue": "crossvale-ocp.com" 
   },
   {
     "ParameterKey": "CertificateAuthorities", 
@@ -37,7 +37,7 @@
   },
   {
     "ParameterKey": "DevopsBucket",
-    "ParameterValue": "xv-ocp4-sandbox"
+    "ParameterValue": "xv-ocp42-sandbox"
   },
   {
     "ParameterKey": "Owner", 
@@ -49,6 +49,6 @@
   },
   {
     "ParameterKey": "RhcosAmi",
-    "ParameterValue": "ami-05263584402676c48"
+    "ParameterValue": "ami-07d4fa96c09d6f103"
   }
 ]
