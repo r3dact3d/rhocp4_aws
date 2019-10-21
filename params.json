@@ -28,8 +28,12 @@
     "ParameterValue": "bradythompson.info" 
   },
   {
-    "ParameterKey": "CertificateAuthorities", 
-    "ParameterValue": "CERTIFICATE_AUTHORITIES"
+    "ParameterKey": "MasterCertificateAuthorities", 
+    "ParameterValue": "MASTER_CERTIFICATE_AUTHORITIES"
+  },
+  {
+    "ParameterKey": "WorkerCertificateAuthorities", 
+    "ParameterValue": "WORKER_CERTIFICATE_AUTHORITIES"
   },
   {
     "ParameterKey": "Environment",

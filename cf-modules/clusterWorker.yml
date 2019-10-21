@@ -22,7 +22,7 @@ Parameters:
     Default: https://api-int.$CLUSTER_NAME.$DOMAIN:22623/config/worker
     Description: Ignition config file location.
     Type: String
-  CertificateAuthorities:
+  WorkerCertificateAuthorities:
     Default: data:text/plain;charset=utf-8;base64,ABC...xYz==
     Description: Base64 encoded certificate authority string to use.
     Type: String
@@ -65,7 +65,7 @@ Metadata:
       - WorkerInstanceType
       - RhcosAmi
       - IgnitionLocation
-      - CertificateAuthorities
+      - WorkerCertificateAuthorities
       - WorkerSecurityGroupId
       - WorkerInstanceProfileName
     - Label:
@@ -85,13 +85,13 @@ Metadata:
         default: "Red Hat Enterprise Linux CoreOS AMI ID"
       IgnitionLocation:
         default: "Worker Ignition Source"
-      CertificateAuthorities:
+      WorkerCertificateAuthorities:
         default: "Ignition CA String"
       WorkerSecurityGroupId:
         default: "Worker Security Group ID"
 
 Resources:
-  Worker0:
+  Worker:
     Type: AWS::EC2::Instance
     Properties:
       ImageId: !Ref RhcosAmi
@@ -113,7 +113,7 @@ Resources:
         - '{"ignition":{"config":{"append":[{"source":"${SOURCE}","verification":{}}]},"security":{"tls":{"certificateAuthorities":[{"source":"${CA_BUNDLE}","verification":{}}]}},"timeouts":{},"version":"2.2.0"},"networkd":{},"passwd":{},"storage":{},"systemd":{}}'
         - {
           SOURCE: !Ref IgnitionLocation,
-          CA_BUNDLE: !Ref CertificateAuthorities,
+          CA_BUNDLE: !Ref WorkerCertificateAuthorities,
         }
       Tags:
       - Key: !Join ["", ["kubernetes.io/cluster/", !Ref InfrastructureName]]
@@ -122,4 +122,4 @@ Resources:
 Outputs:
   PrivateIP:
     Description: The compute node private IP address.
-    Value: !GetAtt Worker0.PrivateIp
+    Value: !GetAtt Worker.PrivateIp

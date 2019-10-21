@@ -11,8 +11,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@master
-      - name: Update params with CertificateAuthorities secret
-        run: sed -i 's@CERTIFICATE_AUTHORITIES@${{ secrets.CERTIFICATE_AUTHORITIES }}@g' params.json
+      - name: Update params with MasterCertificateAuthorities secret
+        run: sed -i 's@MASTER_CERTIFICATE_AUTHORITIES@${{ secrets.MASTER_CERTIFICATE_AUTHORITIES }}@g' params.json
+      - name: Update params with MasterCertificateAuthorities secret
+        run: sed -i 's@WORKER_CERTIFICATE_AUTHORITIES@${{ secrets.WORKER_CERTIFICATE_AUTHORITIES }}@g' params.json
       - name: Print params
         run: cat params.json
       - name: Validate Infra Template

@@ -41,7 +41,7 @@ Parameters:
     Default: https://api-int.$CLUSTER_NAME.$DOMAIN:22623/config/master
     Description: Ignition config file location.
     Type: String
-  CertificateAuthorities:
+  MasterCertificateAuthorities:
     Default: data:text/plain;charset=utf-8;base64,ABC...xYz==
     Description: Base64 encoded certificate authority string to use.
     Type: String
@@ -99,7 +99,7 @@ Metadata:
       - MasterInstanceType
       - RhcosAmi
       - IgnitionLocation
-      - CertificateAuthorities
+      - MasterCertificateAuthorities
       - MasterSecurityGroupId
       - MasterInstanceProfileName
     - Label:
@@ -138,7 +138,7 @@ Metadata:
         default: "Master Instance Profile Name"
       RhcosAmi:
         default: "Red Hat Enterprise Linux CoreOS AMI ID"
-      CertificateAuthorities:
+      MasterCertificateAuthorities:
         default: "Ignition CA String"
       MasterSecurityGroupId:
         default: "Master Security Group ID"
@@ -178,7 +178,7 @@ Resources:
         - '{"ignition":{"config":{"append":[{"source":"${SOURCE}","verification":{}}]},"security":{"tls":{"certificateAuthorities":[{"source":"${CA_BUNDLE}","verification":{}}]}},"timeouts":{},"version":"2.2.0"},"networkd":{},"passwd":{},"storage":{},"systemd":{}}'
         - {
           SOURCE: !Ref IgnitionLocation,
-          CA_BUNDLE: !Ref CertificateAuthorities,
+          CA_BUNDLE: !Ref MasterCertificateAuthorities,
         }
       Tags:
       - Key: !Join ["", ["kubernetes.io/cluster/", !Ref InfrastructureName]]
@@ -230,7 +230,7 @@ Resources:
         - '{"ignition":{"config":{"append":[{"source":"${SOURCE}","verification":{}}]},"security":{"tls":{"certificateAuthorities":[{"source":"${CA_BUNDLE}","verification":{}}]}},"timeouts":{},"version":"2.2.0"},"networkd":{},"passwd":{},"storage":{},"systemd":{}}'
         - {
           SOURCE: !Ref IgnitionLocation,
-          CA_BUNDLE: !Ref CertificateAuthorities,
+          CA_BUNDLE: !Ref MasterCertificateAuthorities,
         }
       Tags:
       - Key: !Join ["", ["kubernetes.io/cluster/", !Ref InfrastructureName]]
@@ -282,7 +282,7 @@ Resources:
         - '{"ignition":{"config":{"append":[{"source":"${SOURCE}","verification":{}}]},"security":{"tls":{"certificateAuthorities":[{"source":"${CA_BUNDLE}","verification":{}}]}},"timeouts":{},"version":"2.2.0"},"networkd":{},"passwd":{},"storage":{},"systemd":{}}'
         - {
           SOURCE: !Ref IgnitionLocation,
-          CA_BUNDLE: !Ref CertificateAuthorities,
+          CA_BUNDLE: !Ref MasterCertificateAuthorities,
         }
       Tags:
       - Key: !Join ["", ["kubernetes.io/cluster/", !Ref InfrastructureName]]
