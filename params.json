@@ -17,7 +17,7 @@
   },
   {
     "ParameterKey": "InfrastructureName", 
-    "ParameterValue": "brady-9zq8s" 
+    "ParameterValue": "brady-rw67d" 
   },
   {
     "ParameterKey": "HostedZoneId", 
@@ -49,6 +49,6 @@
   },
   {
     "ParameterKey": "RhcosAmi",
-    "ParameterValue": "ami-07a94b19f420f9683"
+    "ParameterValue": "ami-096faf7dc367651de"
   }
 ]
