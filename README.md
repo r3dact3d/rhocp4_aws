@@ -26,3 +26,5 @@ This directory holds the Cloudformation templates that create the different nest
 
 #### TODO
 * Add step in pipeline to put cf-modules in s3 bucket - needs to read DevopsBucket from params
+* Add some kind of way to either __create-stack__ or __update-stack__ via GitHub Action
+* Add creation of Public Hosted Zone -> HostedZoneId 
