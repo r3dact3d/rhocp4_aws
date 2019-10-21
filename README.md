@@ -17,7 +17,7 @@
 * cf-modules - This directory holds the Cloudformation templates that create the different nested stacks that are called by infra.yml
 
 ### GitHub Actions
-**validate.aml** -update
+**validate.aml** 
 
 #### TODO
 * Add step in pipeline to put cf-modules in s3 bucket - needs to read DevopsBucket from params
