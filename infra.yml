@@ -247,7 +247,7 @@ Resources:
         Master2Subnet: !Select [2, !Split [",", !GetAtt VpcStack.Outputs.PrivateSubnetIds]]
         MasterSecurityGroupId: !GetAtt SecurityStack.Outputs.MasterSecurityGroupId
         IgnitionLocation: !Sub https://api-int.${ClusterName}.${HostedZoneName}:22623/config/
-        WorkerCertificateAuthorities: !Ref WorkerCertificateAuthorities
+        CertificateAuthorities: !Ref WorkerCertificateAuthorities
         MasterInstanceProfileName: !GetAtt SecurityStack.Outputs.MasterInstanceProfile
         RegisterNlbIpTargetsLambdaArn: !GetAtt NetworkStack.Outputs.RegisterNlbIpTargetsLambda
         ExternalApiTargetGroupArn: !GetAtt NetworkStack.Outputs.ExternalApiTargetGroupArn
@@ -275,7 +275,7 @@ Resources:
         Subnet: !Select [0, !Split [",", !GetAtt VpcStack.Outputs.PrivateSubnetIds]]
         WorkerSecurityGroupId: !GetAtt SecurityStack.Outputs.WorkerSecurityGroupId
         IgnitionLocation: !Sub https://api-int.${ClusterName}.${HostedZoneName}:22623/config/
-        WorkerCertificateAuthorities: !Ref WorkerCertificateAuthorities
+        CertificateAuthorities: !Ref WorkerCertificateAuthorities
         WorkerInstanceProfileName: !GetAtt SecurityStack.Outputs.WorkerInstanceProfile
       Tags:
         - Key: "Env"
@@ -299,7 +299,7 @@ Resources:
         Subnet: !Select [1, !Split [",", !GetAtt VpcStack.Outputs.PrivateSubnetIds]]
         WorkerSecurityGroupId: !GetAtt SecurityStack.Outputs.WorkerSecurityGroupId
         IgnitionLocation: !Sub https://api-int.${ClusterName}.${HostedZoneName}:22623/config/
-        WorkerCertificateAuthorities: !Ref WorkerCertificateAuthorities
+        CertificateAuthorities: !Ref WorkerCertificateAuthorities
         WorkerInstanceProfileName: !GetAtt SecurityStack.Outputs.WorkerInstanceProfile
       Tags:
         - Key: "Env"
