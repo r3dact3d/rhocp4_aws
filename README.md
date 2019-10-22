@@ -27,4 +27,4 @@
 * Add creation of Public Hosted Zone -> HostedZoneId 
 
 #### Log
-Deploy 0.0.1
+Deploy 0.0.2
