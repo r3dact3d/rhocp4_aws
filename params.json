@@ -1,7 +1,7 @@
 [
   {
     "ParameterKey": "VpcCidr", 
-    "ParameterValue": "10.0.0.0/16" 
+    "ParameterValue": "10.1.0.0/16" 
   },
   {
     "ParameterKey": "AllowedBootstrapSshCidr", 
@@ -13,19 +13,19 @@
   },
   {
     "ParameterKey": "ClusterName", 
-    "ParameterValue": "sandbox" 
+    "ParameterValue": "brady" 
   },
   {
     "ParameterKey": "InfrastructureName", 
-    "ParameterValue": "sandbox-zgnlv" 
+    "ParameterValue": "brady-gvwkb" 
   },
   {
     "ParameterKey": "HostedZoneId", 
-    "ParameterValue": "Z1QW2RQYHKJ0D7" 
+    "ParameterValue": "Z175JZFFVG0VJJ" 
   },
   {
     "ParameterKey": "HostedZoneName", 
-    "ParameterValue": "bradythompson.info" 
+    "ParameterValue": "crossvale-ocp.com" 
   },
   {
     "ParameterKey": "MasterCertificateAuthorities", 
@@ -41,7 +41,7 @@
   },
   {
     "ParameterKey": "DevopsBucket",
-    "ParameterValue": "xv-ocp4-sandbox"
+    "ParameterValue": "xv-ocp42-sandbox"
   },
   {
     "ParameterKey": "Owner", 
@@ -53,6 +53,6 @@
   },
   {
     "ParameterKey": "RhcosAmi",
-    "ParameterValue": "ami-05c79276d240b93bc"
+    "ParameterValue": "ami-002ce28e43c119054"
   }
 ]
