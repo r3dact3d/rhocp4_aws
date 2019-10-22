@@ -209,7 +209,7 @@ Resources:
       Parameters:
         InfrastructureName: !Ref InfrastructureName
         AllowedBootstrapSshCidr: !Ref AllowedBootstrapSshCidr
-        BootstrapIgnitionLocation: !Sub s3://${DevopsBucket}/bootstrap.ign
+        BootstrapIgnitionLocation: !Sub s3://xv-ocp42-ignition/bootstrap.ign
         RhcosAmi: !Ref RhcosAmi
         VpcId: !GetAtt VpcStack.Outputs.VpcId
         PublicSubnet: !Select [0, !Split [",", !GetAtt VpcStack.Outputs.PublicSubnetIds]]
