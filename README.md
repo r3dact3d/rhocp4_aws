@@ -7,7 +7,7 @@
 * openshift-installer bindary in PATH from [cloud.redhat.com](https://cloud.redhat.com/openshift/install/aws/user-provisioned)
 * Downloaded PullSecret from [cloud.redhat.com](https://cloud.redhat.com/openshift/install/aws/user-provisioned) for customer
 * OC and Kubectl binaries are in PATH
-* Using AWS Region with 3 AZs
+* Using AWS Region us-east-1 - if you use another region, make sure it has 3 AZ.  Set as your default in \~/.aws/config and update the AWS_DEFAULT_REGION in the .github/workflows/validate.yaml file
 
 ### Installation
 1. Create working directory
