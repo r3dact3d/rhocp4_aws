@@ -230,7 +230,7 @@ Resources:
           Value: !Ref "AWS::Region"
 
   ControlPlaneStack:
-    DependsOn: [SecurityStack, NetworkStack]
+    DependsOn: BootstrapStack
     Type: AWS::CloudFormation::Stack
     Properties:
       TemplateURL: !Sub https://s3.amazonaws.com/${DevopsBucket}/cf-modules/clusterControlPlane.yml
@@ -264,7 +264,7 @@ Resources:
           Value: !Ref "AWS::Region"
 
   Worker0Stack:
-    DependsOn: [SecurityStack, NetworkStack]
+    DependsOn: ControlPlaneStack
     Type: AWS::CloudFormation::Stack
     Properties:
       TemplateURL: !Sub https://s3.amazonaws.com/${DevopsBucket}/cf-modules/clusterWorker.yml
@@ -288,7 +288,7 @@ Resources:
           Value: !Ref "AWS::Region"
 
   Worker1Stack:
-    DependsOn: [SecurityStack, NetworkStack]
+    DependsOn: ControlPlaneStack
     Type: AWS::CloudFormation::Stack
     Properties:
       TemplateURL: !Sub https://s3.amazonaws.com/${DevopsBucket}/cf-modules/clusterWorker.yml
