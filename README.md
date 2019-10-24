@@ -2,57 +2,73 @@
 
 ### Assumptions
 * Registered Domain in AWS with a Public Hosted Zone
-* Have Openshift-installer bindary in PATH from [cloud.redhat.com](https://cloud.redhat.com/openshift/install/aws/user-provisioned)
+* AWSCLI is installed and in PATH
+* AWS User has Access Key credentials configured
+* openshift-installer bindary in PATH from [cloud.redhat.com](https://cloud.redhat.com/openshift/install/aws/user-provisioned)
 * Downloaded PullSecret from [cloud.redhat.com](https://cloud.redhat.com/openshift/install/aws/user-provisioned) for customer
-* Have SSH Key and Agent running
-* Using AWS Region with 3 AZs
 * OC and Kubectl binaries are in PATH
-
+* Using AWS Region with 3 AZs
 
 ### Installation
-1. Get the HostedZoneId for your domain and save this output to use later in parameters file. Replace `<domain name<` in the command below with your own domain name.
+1. Create working directory
+```bash
+cd; mkdir ocp4Install; cd ocp4Install
+```
+2. Get the HostedZoneId for your domain and save this output to use later in parameters file. Replace `<domain name<` in the command below with your own domain name.
 ```bash
 aws route53 list-hosted-zones-by-name --dns-name <domain name> --query 'HostedZones[0].Id' | cut -d/ -f3 |cut -d\" -f1
 ```
-2. Create SSH Keypair, start ssh-agent, and add keypair to agent. if you do not already have one for use.
+3. Create SSH Keypair, start ssh-agent, and add keypair to agent. if you do not already have one for use.
 ```bash
 ssh-keygen -t rsa -b 4096 -N '' -f ~/.ssh/id_rsa
 eval "$(ssh-agent -s)"
 ssh-add ~/.ssh/id_rsa
 ``` 
-3. Create customer install file
+4. Create customer install file
 ```bash
 openshift-install create install-config --dir=.
 ```
-4. Edit the install-config.yaml and lower worker reaplicas from 3 to 0
-5. Generate manifest files
+5. Edit the install-config.yaml and lower worker reaplicas from 3 to 0
+6. Generate manifest files
 ```bash
 openshift-install create manifests --dir=.
 ```
-6. Remove files that define control plane and worker nodes
+7. Remove files that define control plane and worker nodes
 ```bash
 rm -rf openshift/99_openshift-cluster-api_{master,worker}-machines*.yaml
 ```
-7. Create ignition files
+8. Create ignition files
 ```bash
 openshift-install create ignition-configs --dir=.
 ```
-8. Extract infraID for use later with parameters file
+9. Extract infraID for use later with parameters file
 ```bash
 grep infraID metadata.json |cut -d: -f4 |cut -d, -f1
 ```
-9. Create s3 DevopsBucket and Upload Bootstrap ignition
+10. Create s3 DevopsBucket and Upload Bootstrap ignition. Make your own bucket name.
 ```bash
-aws s3 mb s3://ocp4-devops-infra
-aws s3 cp bootstrap.ign s3://ocp4-devops-infra/bootstrap.ign
+aws s3 mb s3://<devopsbucket>
+aws s3 cp bootstrap.ign s3://<devopsbucket>/bootstrap.ign
 ```
-10. Clone this repo and update params.json with parameters for your cluster \*See Cloudformation Files section below\*
+11. Clone this repo 
 ```bash
 git clone https://github.com/r3dact3d/rhocp4_aws.git
 cd rhocp4_aws
 ```
-11. Update GitHub Secrets with your values \*See GitHub Secrets section below\*
-12. Create PR for approval and merge to master branch.  This will kick off the GitHub Actions CI/CD pipeline. \*See GitHub Actions section below\*
+12. Upload Cloudformation cf-modules to DevopsBucket 
+```bash
+aws s3 sync cf-modules s3://<devopsbucket>/cf-modules/
+```
+13. If you don't already have a RHCOS AMI to use, list and pick one
+```bash
+aws ec2 describe-images --query 'sort_by(Images, &CreationDate)[*].[CreationDate,Name,ImageId]' --filters "Name=name,Values=rhcos*"  --output table
+```
+14. Create a new git branch and update params.json with parameters for your cluster \*See Cloudformation Files section below\* \*NOTE: don't update certificate authorities here, that is updated next\*
+```bash
+git checkout -b deploy/<new branch name>
+```
+15. Update GitHub Secrets with your values \*See GitHub Secrets section below\*
+16. Create PR for approval and merge to master branch.  This will kick off the GitHub Actions CI/CD pipeline. \*See GitHub Actions section below\*
 
 
 ### GitHub Secrets
