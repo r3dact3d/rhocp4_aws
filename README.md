@@ -24,11 +24,11 @@ ssh-keygen -t rsa -b 4096 -N '' -f ~/.ssh/id_rsa
 eval "$(ssh-agent -s)"
 ssh-add ~/.ssh/id_rsa
 ``` 
-4. Create customer install file
+4. Create custom install file
 ```bash
 openshift-install create install-config --dir=.
 ```
-5. Edit the install-config.yaml and lower worker reaplicas from 3 to 0
+5. Edit the install-config.yaml and lower worker replicas from 3 to 0
 6. Generate manifest files
 ```bash
 openshift-install create manifests --dir=.
@@ -68,8 +68,19 @@ aws ec2 describe-images --query 'sort_by(Images, &CreationDate)[*].[CreationDate
 git checkout -b deploy/<new branch name>
 ```
 15. Update GitHub Secrets with your values \*See GitHub Secrets section below\*
-16. Create PR for approval and merge to master branch.  This will kick off the GitHub Actions CI/CD pipeline. \*See GitHub Actions section below\*
-
+16. Create PR for approval and merge to master branch.  This will kick off the GitHub Actions CI/CD pipeline. Watch progress of CloudFormation deployment either from AWS console or using AWS CLI\*See GitHub Actions section below\*
+```bash
+aws cloudformation describe-stacks --stack-name sandboxStack --query 'Stacks[*].StackStatus'
+```
+17. Watch for successful bootstrapping of OCP Cluster 
+```bash
+openshift-install wait-for bootstrap-complete --dir=. --log-level debug
+```
+18. Get kube credentials
+```bash
+export KUBECONFIG=auth/kubeconfig 
+```
+19. Approve [CSR](https://docs.openshift.com/container-platform/4.2/installing/installing_aws_user_infra/installing-aws-user-infra.html#installation-approve-csrs_installing-aws-user-infra)
 
 ### GitHub Secrets
 * CERTIFICATE_AUTHORITIES - This is found in __master.ign__

@@ -57,14 +57,11 @@ Parameters:
     Default: 0.0.0.0/0
     Description: CIDR block to allow SSH access to the bootstrap node.
     Type: String
-  WorkerCertificateAuthorities:
+  CertificateAuthorities:
     Default: data:text/plain;charset=utf-8;base64,ABC...xYz==
     Description: Specify the value from the worker.ign file that is in the installation directory.
     Type: String
-  MasterCertificateAuthorities:
-    Default: data:text/plain;charset=utf-8;base64,ABC...xYz==
-    Description: Specify the value from the master.ign file that is in the installation directory.
-    Type: String
+
 Metadata:
   AWS::CloudFormation::Interface:
     ParameterGroups:
@@ -95,8 +92,7 @@ Metadata:
       Parameters:
       - RhcosAmi
       - AllowedBootstrapSshCidr
-      - WorkerCertificateAuthorities
-      - MasterCertificateAuthorities
+      - CertificateAuthorities
 
     ParameterLabels:
       Environment:
@@ -123,9 +119,7 @@ Metadata:
         default: "Allowed SSH Source"
       RhcosAmi:
         default: "Red Hat Enterprise Linux CoreOS AMI ID"
-      WorkerCertificateAuthorities:
-        default: "Ignition CA String"
-      MasterCertificateAuthorities:
+      CertificateAuthorities:
         default: "Ignition CA String"
 
 Conditions:
@@ -247,7 +241,7 @@ Resources:
         Master2Subnet: !Select [2, !Split [",", !GetAtt VpcStack.Outputs.PrivateSubnetIds]]
         MasterSecurityGroupId: !GetAtt SecurityStack.Outputs.MasterSecurityGroupId
         IgnitionLocation: !Sub https://api-int.${ClusterName}.${HostedZoneName}:22623/config/
-        CertificateAuthorities: !Ref WorkerCertificateAuthorities
+        CertificateAuthorities: !Ref CertificateAuthorities
         MasterInstanceProfileName: !GetAtt SecurityStack.Outputs.MasterInstanceProfile
         RegisterNlbIpTargetsLambdaArn: !GetAtt NetworkStack.Outputs.RegisterNlbIpTargetsLambda
         ExternalApiTargetGroupArn: !GetAtt NetworkStack.Outputs.ExternalApiTargetGroupArn
@@ -275,7 +269,7 @@ Resources:
         Subnet: !Select [0, !Split [",", !GetAtt VpcStack.Outputs.PrivateSubnetIds]]
         WorkerSecurityGroupId: !GetAtt SecurityStack.Outputs.WorkerSecurityGroupId
         IgnitionLocation: !Sub https://api-int.${ClusterName}.${HostedZoneName}:22623/config/
-        CertificateAuthorities: !Ref WorkerCertificateAuthorities
+        CertificateAuthorities: !Ref CertificateAuthorities
         WorkerInstanceProfileName: !GetAtt SecurityStack.Outputs.WorkerInstanceProfile
       Tags:
         - Key: "Env"
@@ -299,7 +293,7 @@ Resources:
         Subnet: !Select [1, !Split [",", !GetAtt VpcStack.Outputs.PrivateSubnetIds]]
         WorkerSecurityGroupId: !GetAtt SecurityStack.Outputs.WorkerSecurityGroupId
         IgnitionLocation: !Sub https://api-int.${ClusterName}.${HostedZoneName}:22623/config/
-        CertificateAuthorities: !Ref WorkerCertificateAuthorities
+        CertificateAuthorities: !Ref CertificateAuthorities
         WorkerInstanceProfileName: !GetAtt SecurityStack.Outputs.WorkerInstanceProfile
       Tags:
         - Key: "Env"
