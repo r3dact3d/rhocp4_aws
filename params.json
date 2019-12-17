@@ -5,7 +5,7 @@
   },
   {
     "ParameterKey": "AllowedBootstrapSshCidr", 
-    "ParameterValue": "47.187.130.94/32" 
+    "ParameterValue": "##########/32" 
   },
   {
     "ParameterKey": "SubnetBits", 
@@ -25,7 +25,7 @@
   },
   {
     "ParameterKey": "HostedZoneName", 
-    "ParameterValue": "bradythompson.info" 
+    "ParameterValue": "youhost.com" 
   },
   {
     "ParameterKey": "CertificateAuthorities", 
